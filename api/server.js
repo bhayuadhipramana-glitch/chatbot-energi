@@ -40,10 +40,36 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 
 // =============== CORS CONFIGURATION ===============
-// Allow all origins
-const allowedOrigins = ['*']; // Allow all origins
+// Allow multiple origins including production domain
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5000', 
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:5000',
+  'http://10.21.0.55:3000',
+  'http://20.2.81.1:3000',
+  'http://192.168.56.1:3000',
+  'https://enernova.undiksha.cloud',
+  'https://www.enernova.undiksha.cloud'
+];
+
 app.use(cors({
-  origin: true, // Allow all origins
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Allow all origins in development
+    if (process.env.NODE_ENV !== 'production') {
+      return callback(null, true);
+    }
+    
+    // Check if origin is in allowed list
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Allow all for now, can be restricted later
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
