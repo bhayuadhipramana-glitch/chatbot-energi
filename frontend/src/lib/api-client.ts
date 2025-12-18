@@ -75,7 +75,8 @@ apiClient.interceptors.response.use(
       // Don't redirect if we are already on the login page or if this is a login attempt
       // This allows the login component to handle the error and show it to the user
       const isLoginRequest = error.config?.url?.includes('/auth/login');
-      const isLoginPage = typeof window !== 'undefined' && window.location.pathname === '/login';
+      // More robust check for login page (handles /login, /login/, query params etc)
+      const isLoginPage = typeof window !== 'undefined' && window.location.pathname.startsWith('/login');
 
       if (!isLoginRequest && !isLoginPage) {
         console.warn('⚠️ Unauthorized - Redirecting to login');
@@ -219,7 +220,9 @@ export const handleAPIError = (error: any): string => {
       case 400:
         return `Data tidak valid: ${message}`;
       case 401:
-        return 'Sesi Anda telah berakhir. Silakan login kembali.';
+        // Use the backend error message if available, otherwise fallback to session expired
+        // This ensures "Invalid credentials" shown during login, but "Session expired" for other 401s
+        return message || 'Sesi Anda telah berakhir. Silakan login kembali.';
       case 403:
         return 'Anda tidak memiliki akses ke resource ini.';
       case 404:
