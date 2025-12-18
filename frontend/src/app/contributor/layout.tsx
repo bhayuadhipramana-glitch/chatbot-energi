@@ -1,39 +1,23 @@
-import type { Metadata } from "next";
-import localFont from "next/font/local";
-import "./globals.css";
-// IMPORT PENTING:
-import { AuthProvider } from "@/contexts/AuthContext";
+import React from 'react';
 
-// Konfigurasi Font (Sesuaikan jika nama file font Anda berbeda)
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
-
-export const metadata: Metadata = {
-  title: "EnerNova - AI Research Platform",
-  description: "Platform AI untuk riset energi terbarukan.",
+// Metadata spesifik untuk halaman ini (Opsional, tapi aman)
+export const metadata = {
+  title: "EnerNova - Contributor Area",
+  description: "Dashboard khusus untuk kontributor jurnal.",
 };
 
-export default function RootLayout({
+export default function ContributorLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="id">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {/* DISINI KUNCINYA: AuthProvider harus membungkus {children} */}
-        <AuthProvider>
-          {children}
-        </AuthProvider>
-      </body>
-    </html>
+    <section className="min-h-screen bg-slate-50">
+      {/* PENTING:
+        Jangan import 'globals.css' atau 'fonts' disini.
+        Semua gaya sudah otomatis turun dari src/app/layout.tsx
+      */}
+      {children}
+    </section>
   );
 }
