@@ -14,6 +14,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  register: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   isLoading: boolean;
 }
@@ -23,31 +24,31 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true); 
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     try {
       const storedToken = localStorage.getItem('token');
       const storedUser = localStorage.getItem('user');
-      
+
       if (storedToken && storedUser) {
         setToken(storedToken);
         setUser(JSON.parse(storedUser));
       }
     } catch (error) {
       console.error("Failed to parse auth data from localStorage", error);
-      
+
       localStorage.removeItem('token');
       localStorage.removeItem('user');
     } finally {
-      setIsLoading(false); 
+      setIsLoading(false);
     }
   }, []);
 
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true);
-    
+
     try {
       const response = await authAPI.login(email, password);
 
@@ -62,9 +63,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsLoading(false);
         return { success: true };
       }
-      
+
       setIsLoading(false);
       return { success: false, error: 'Invalid credentials' };
+    } catch (error: any) {
+      setIsLoading(false);
+      const errorMessage = error.response?.data?.message || handleAPIError(error);
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  const register = async (name: string, email: string, password: string): Promise<{ success: boolean; error?: string }> => {
+    setIsLoading(true);
+
+    try {
+      const response = await authAPI.register(name, email, password);
+
+      if (response.status === 'success' && response.data && response.data.user) {
+        const userData = response.data.user;
+        const token = response.data.token;
+
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(userData));
+
+        setUser(userData);
+        setIsLoading(false);
+        return { success: true };
+      }
+
+      setIsLoading(false);
+      return { success: false, error: 'Registration failed' };
     } catch (error: any) {
       setIsLoading(false);
       const errorMessage = error.response?.data?.message || handleAPIError(error);
@@ -78,7 +106,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      
+
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       setUser(null);
@@ -102,7 +130,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, register, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );
