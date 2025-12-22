@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { FileText, CheckCircle, XCircle, Clock, TrendingUp, Users, Database, Leaf, AlertTriangle } from 'lucide-react';
+import { FileText, CheckCircle, XCircle, Clock, TrendingUp, Users, Database, Leaf, AlertTriangle, MessageSquare } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { useAuth } from '@/contexts/AuthContext';
 import { DebugAPIInfo } from '@/components/debug-api-info';
@@ -93,10 +93,10 @@ export default function AdminDashboard() {
         second: '2-digit'
       }));
     };
-    
+
     updateTime();
     const interval = setInterval(updateTime, 1000);
-    
+
     return () => clearInterval(interval);
   }, []);
 
@@ -187,20 +187,20 @@ export default function AdminDashboard() {
         }
       </style>
     `;
-    
+
     document.body.appendChild(scanNotification);
 
     setTimeout(() => {
       scanNotification.remove();
 
-      setLocalJournals(prev => 
-        prev.map(j => 
-          j.id === newJournal.id 
-            ? { 
-                ...j, 
-                detectedAuthor: randomAuthor,
-                authorInstitution: 'Verified by AI Scanner'
-              } 
+      setLocalJournals(prev =>
+        prev.map(j =>
+          j.id === newJournal.id
+            ? {
+              ...j,
+              detectedAuthor: randomAuthor,
+              authorInstitution: 'Verified by AI Scanner'
+            }
             : j
         )
       );
@@ -233,9 +233,9 @@ export default function AdminDashboard() {
           </div>
         </div>
       `;
-      
+
       document.body.appendChild(successNotification);
-      
+
       setTimeout(() => {
         successNotification.style.animation = 'slideOut 0.3s ease-in';
         setTimeout(() => successNotification.remove(), 300);
@@ -293,9 +293,9 @@ export default function AdminDashboard() {
           }
         </style>
       `;
-      
+
       document.body.appendChild(notification);
-      
+
       setTimeout(() => {
         notification.style.animation = 'slideOut 0.3s ease-in';
         setTimeout(() => notification.remove(), 300);
@@ -307,7 +307,7 @@ export default function AdminDashboard() {
     const journal = localJournals.find(j => j.id === id);
     if (journal) {
       const reason = prompt(`❌ Alasan penolakan untuk "${journal.title.substring(0, 40)}...":`, 'Format tidak sesuai atau konten tidak relevan');
-      
+
       if (reason !== null) {
         const result = await updateJournalStatus(id, 'REJECTED');
         if (!result.success) {
@@ -344,9 +344,9 @@ export default function AdminDashboard() {
             </div>
           </div>
         `;
-        
+
         document.body.appendChild(notification);
-        
+
         setTimeout(() => {
           notification.style.animation = 'slideOut 0.3s ease-in';
           setTimeout(() => notification.remove(), 300);
@@ -358,10 +358,10 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-8">
       <div className="max-w-7xl mx-auto space-y-6">
-        
+
         {/* Debug Info - only in development */}
         <DebugAPIInfo />
-        
+
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-700 to-teal-600 bg-clip-text text-transparent">
@@ -376,7 +376,14 @@ export default function AdminDashboard() {
               {currentTime}
             </p>
           </div>
-          <div>
+          <div className="flex gap-3">
+            <Button
+              onClick={() => window.location.href = '/'}
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
+            >
+              <MessageSquare className="w-4 h-4 mr-2" />
+              Chat
+            </Button>
             <input
               type="file"
               id="dashboard-upload"
@@ -385,7 +392,7 @@ export default function AdminDashboard() {
               multiple
               onChange={handleDashboardUpload}
             />
-            <Button 
+            <Button
               onClick={() => document.getElementById('dashboard-upload')?.click()}
               className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg"
             >
@@ -472,154 +479,154 @@ export default function AdminDashboard() {
                     <th className="py-4 px-6 text-emerald-700 font-semibold whitespace-nowrap text-right">Aksi</th>
                   </tr>
                 </thead>
-                  <tbody>
-                    {localJournals.map((journal) => (
-                      <tr key={journal.id} className="border-b border-slate-200 hover:bg-emerald-50/50 transition-colors">
-                        <td className="py-4 px-6 whitespace-nowrap">
-                          <div className="flex items-center gap-3 min-w-[250px]">
-                            <div className="bg-gradient-to-br from-emerald-100 to-teal-100 p-2 rounded-lg flex-shrink-0">
-                              <FileText className="w-5 h-5 text-emerald-600" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="font-medium text-slate-800 truncate" title={journal.title}>{journal.title}</p>
-                              <p className="text-xs text-slate-500">ID: {journal.id}</p>
-                            </div>
+                <tbody>
+                  {localJournals.map((journal) => (
+                    <tr key={journal.id} className="border-b border-slate-200 hover:bg-emerald-50/50 transition-colors">
+                      <td className="py-4 px-6 whitespace-nowrap">
+                        <div className="flex items-center gap-3 min-w-[250px]">
+                          <div className="bg-gradient-to-br from-emerald-100 to-teal-100 p-2 rounded-lg flex-shrink-0">
+                            <FileText className="w-5 h-5 text-emerald-600" />
                           </div>
-                        </td>
-                        <td className="py-4 px-6 whitespace-nowrap">
-                          <div className="flex items-center gap-2 min-w-[220px]">
-                            <Avatar className="h-8 w-8 border-2 border-emerald-200 flex-shrink-0">
-                              <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-teal-500 text-white text-xs font-semibold">
-                                {(journal.detectedAuthor || journal.uploader?.name || 'UK').substring(0, 2).toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="flex-1 min-w-0">
-                              {journal.detectedAuthor === 'Scanning...' ? (
-                                <div className="flex items-center gap-2">
-                                  <div className="w-3 h-3 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                                  <span className="text-sm text-blue-600 font-medium">Scanning...</span>
-                                </div>
-                              ) : journal.detectedAuthor && !journal.detectedAuthor.includes('Perlu Review Manual') ? (
-                                <div className="space-y-1">
-                                  <p className="text-sm font-medium text-emerald-700 truncate" title={journal.detectedAuthor}>
-                                    ✅ {journal.detectedAuthor}
-                                  </p>
-                                  {journal.authorInstitution && journal.authorInstitution !== 'Not specified' && (
-                                    <p className="text-xs text-slate-500 truncate" title={journal.authorInstitution}>
-                                      🏛️ {journal.authorInstitution}
-                                    </p>
-                                  )}
-                                  {journal.publicationYear && (
-                                    <p className="text-xs text-blue-600 font-medium">
-                                      📅 Tahun: {journal.publicationYear}
-                                    </p>
-                                  )}
-                                  <p className="text-xs text-slate-400">
-                                    📤 {journal.uploader?.name || 'Unknown'}
-                                  </p>
-                                </div>
-                              ) : (
-                                <div className="space-y-1">
-                                  <p className="text-sm font-medium text-orange-600 flex items-center gap-1">
-                                    <AlertTriangle className="w-4 h-4 flex-shrink-0" />
-                                    Author Belum Terdeteksi
-                                  </p>
-                                  <span className="inline-block px-2 py-0.5 bg-orange-100 text-orange-700 text-xs rounded-full border border-orange-300">
-                                    ⚠️ Perlu Review Manual
-                                  </span>
-                                  <p className="text-xs text-slate-400">
-                                    📤 {journal.uploader?.name || 'Unknown'}
-                                  </p>
-                                </div>
-                              )}
-                            </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-slate-800 truncate" title={journal.title}>{journal.title}</p>
+                            <p className="text-xs text-slate-500">ID: {journal.id}</p>
                           </div>
-                        </td>
-                        <td className="py-4 px-6 text-sm text-slate-600 whitespace-nowrap">
-                          {new Date(journal.uploadDate).toLocaleDateString('id-ID', {
-                            day: '2-digit',
-                            month: 'short',
-                            year: 'numeric'
-                          })}
-                        </td>
-                        <td className="py-4 px-6 text-sm text-slate-600 whitespace-nowrap">
-                          {journal.fileSize}
-                        </td>
-                        <td className="py-4 px-6 whitespace-nowrap">
-                          <StatusBadge status={journal.status} />
-                        </td>
-                        <td className="py-4 px-6 whitespace-nowrap">
-                          <div className="flex justify-end gap-2 min-w-[180px]">
-                            {journal.status === 'pending' || journal.status === 'PENDING' ? (
-                              <>
-                                <Button 
-                                  size="sm" 
-                                  variant="outline"
-                                  onClick={() => handleApprove(journal.id)}
-                                  className="text-emerald-600 hover:bg-emerald-50 border-emerald-300 hover:border-emerald-400 font-medium whitespace-nowrap"
-                                >
-                                  <CheckCircle className="w-4 h-4 mr-1" />
-                                  Setuju
-                                </Button>
-                                <Button 
-                                  size="sm" 
-                                  variant="outline"
-                                  onClick={() => handleReject(journal.id)}
-                                  className="text-red-600 hover:bg-red-50 border-red-300 hover:border-red-400 font-medium whitespace-nowrap"
-                                >
-                                  <XCircle className="w-4 h-4 mr-1" />
-                                  Tolak
-                                </Button>
-                              </>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6 whitespace-nowrap">
+                        <div className="flex items-center gap-2 min-w-[220px]">
+                          <Avatar className="h-8 w-8 border-2 border-emerald-200 flex-shrink-0">
+                            <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-teal-500 text-white text-xs font-semibold">
+                              {(journal.detectedAuthor || journal.uploader?.name || 'UK').substring(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            {journal.detectedAuthor === 'Scanning...' ? (
+                              <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                                <span className="text-sm text-blue-600 font-medium">Scanning...</span>
+                              </div>
+                            ) : journal.detectedAuthor && !journal.detectedAuthor.includes('Perlu Review Manual') ? (
+                              <div className="space-y-1">
+                                <p className="text-sm font-medium text-emerald-700 truncate" title={journal.detectedAuthor}>
+                                  ✅ {journal.detectedAuthor}
+                                </p>
+                                {journal.authorInstitution && journal.authorInstitution !== 'Not specified' && (
+                                  <p className="text-xs text-slate-500 truncate" title={journal.authorInstitution}>
+                                    🏛️ {journal.authorInstitution}
+                                  </p>
+                                )}
+                                {journal.publicationYear && (
+                                  <p className="text-xs text-blue-600 font-medium">
+                                    📅 Tahun: {journal.publicationYear}
+                                  </p>
+                                )}
+                                <p className="text-xs text-slate-400">
+                                  📤 {journal.uploader?.name || 'Unknown'}
+                                </p>
+                              </div>
                             ) : (
-                              <Button 
-                                size="sm" 
-                                variant="ghost"
-                                className="text-slate-400"
-                                disabled
-                              >
-                                <FileText className="w-4 h-4" />
-                              </Button>
+                              <div className="space-y-1">
+                                <p className="text-sm font-medium text-orange-600 flex items-center gap-1">
+                                  <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                                  Author Belum Terdeteksi
+                                </p>
+                                <span className="inline-block px-2 py-0.5 bg-orange-100 text-orange-700 text-xs rounded-full border border-orange-300">
+                                  ⚠️ Perlu Review Manual
+                                </span>
+                                <p className="text-xs text-slate-400">
+                                  📤 {journal.uploader?.name || 'Unknown'}
+                                </p>
+                              </div>
                             )}
                           </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6 text-sm text-slate-600 whitespace-nowrap">
+                        {new Date(journal.uploadDate).toLocaleDateString('id-ID', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric'
+                        })}
+                      </td>
+                      <td className="py-4 px-6 text-sm text-slate-600 whitespace-nowrap">
+                        {journal.fileSize}
+                      </td>
+                      <td className="py-4 px-6 whitespace-nowrap">
+                        <StatusBadge status={journal.status} />
+                      </td>
+                      <td className="py-4 px-6 whitespace-nowrap">
+                        <div className="flex justify-end gap-2 min-w-[180px]">
+                          {journal.status === 'pending' || journal.status === 'PENDING' ? (
+                            <>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleApprove(journal.id)}
+                                className="text-emerald-600 hover:bg-emerald-50 border-emerald-300 hover:border-emerald-400 font-medium whitespace-nowrap"
+                              >
+                                <CheckCircle className="w-4 h-4 mr-1" />
+                                Setuju
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleReject(journal.id)}
+                                className="text-red-600 hover:bg-red-50 border-red-300 hover:border-red-400 font-medium whitespace-nowrap"
+                              >
+                                <XCircle className="w-4 h-4 mr-1" />
+                                Tolak
+                              </Button>
+                            </>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="text-slate-400"
+                              disabled
+                            >
+                              <FileText className="w-4 h-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {isLoadingJournals && (
+              <div className="flex items-center justify-center p-12">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+                  <span className="text-slate-600 font-medium">Memuat data jurnal...</span>
+                </div>
               </div>
+            )}
 
-              {isLoadingJournals && (
-                <div className="flex items-center justify-center p-12">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
-                    <span className="text-slate-600 font-medium">Memuat data jurnal...</span>
-                  </div>
+            {!isLoadingJournals && localJournals.length === 0 && (
+              <div className="flex flex-col items-center justify-center p-16 text-center">
+                <div className="bg-gradient-to-br from-emerald-100 to-teal-100 w-20 h-20 rounded-full flex items-center justify-center mb-4">
+                  <FileText className="w-10 h-10 text-emerald-600" />
                 </div>
-              )}
-
-              {!isLoadingJournals && localJournals.length === 0 && (
-                <div className="flex flex-col items-center justify-center p-16 text-center">
-                  <div className="bg-gradient-to-br from-emerald-100 to-teal-100 w-20 h-20 rounded-full flex items-center justify-center mb-4">
-                    <FileText className="w-10 h-10 text-emerald-600" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-slate-800 mb-2">Belum Ada Jurnal</h3>
-                  <p className="text-slate-600 mb-6 max-w-md">
-                    Mulai dengan mengupload jurnal penelitian energi terbarukan pertama Anda
-                  </p>
-                  <Button 
-                    onClick={() => document.getElementById('dashboard-upload')?.click()}
-                    className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white"
-                  >
-                    <FileText className="w-4 h-4 mr-2" />
-                    Upload Jurnal Pertama
-                  </Button>
-                </div>
-              )}
+                <h3 className="text-xl font-semibold text-slate-800 mb-2">Belum Ada Jurnal</h3>
+                <p className="text-slate-600 mb-6 max-w-md">
+                  Mulai dengan mengupload jurnal penelitian energi terbarukan pertama Anda
+                </p>
+                <Button
+                  onClick={() => document.getElementById('dashboard-upload')?.click()}
+                  className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white"
+                >
+                  <FileText className="w-4 h-4 mr-2" />
+                  Upload Jurnal Pertama
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
 
-        {}
+        { }
         <Card className="shadow-xl border-2 border-purple-100">
           <CardHeader className="border-b bg-gradient-to-r from-purple-50 to-indigo-50">
             <CardTitle className="flex items-center gap-2 text-purple-700">
@@ -639,7 +646,7 @@ export default function AdminDashboard() {
                     .map(j => j.detectedAuthor)
                 )
               ).sort();
-              
+
               return (
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -655,7 +662,7 @@ export default function AdminDashboard() {
                       {uniqueAuthors.map((author, idx) => {
                         const authorJournals = localJournals.filter(j => j.detectedAuthor === author);
                         const firstJournal = authorJournals[0];
-                        
+
                         return (
                           <Card key={idx} className="p-4 hover:shadow-lg transition-shadow border-purple-100 hover:border-purple-300">
                             <div className="flex items-start gap-3">
